@@ -1,4 +1,4 @@
-name: Build
+name: build-linux-6.6-el9
 on:
   #push:
   #  branches: [ "master" ]
