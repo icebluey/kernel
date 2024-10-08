@@ -1,0 +1,41 @@
+name: Build
+on:
+  #push:
+  #  branches: [ "master" ]
+  #pull_request:
+  #  branches: [ "master" ]
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install docker
+        run: >
+          sudo apt update -y -qqq;
+          sudo apt autoremove --purge needrestart;
+          sudo apt install -y bash;
+          sudo ln -svf bash /bin/sh;
+          sudo /bin/bash scripts/.clean-os.sh;
+          sudo /bin/bash scripts/install_for_docker.sh;
+          sudo /bin/bash scripts/install_docker.sh;
+
+      - name: Build kernel 6.6 el9
+        run: |
+          sudo /bin/bash al9/6.6/run-build-al9.sh
+          sudo /bin/systemctl stop docker.socket docker.service containerd.service
+          sudo /bin/rm -fr /var/lib/docker/* || true 
+          sudo /bin/rm -fr /var/lib/containerd/* || true 
+          sudo /bin/rm -fr /mnt/docker-data/* || true 
+      - name: Upload kernel 6.6 el9
+        run: |
+          _dateutc=$(date -u +%Y-%m-%d-%H%M)
+          _repo="$(echo ${{ github.repository }} | awk -F '/' '{print $2}')"
+          _kernel_ver="$(sudo ls -1 /home/.tmp.kernel/_output/kernel/assets/kernel-* | sed -e 's|.*kernel-||g' -e 's|-repo.*||g' | tail -n1)"
+          sudo /bin/ls -lah /home/.tmp.kernel/_output/kernel/assets/
+          sudo /bin/ls -lah /home/.tmp.kernel/_output/kernel/kernel-*-repos/packages/
+          sudo /bin/ls -1 /home/.tmp.kernel/_output/kernel/assets/kernel-* 2>/dev/null | xargs --no-run-if-empty -I '{}' sudo /bin/bash scripts/.upload_file_to_github-release.sh --token ${{ secrets.GITHUB_TOKEN }} --user "${{ github.repository_owner }}" --repo "${_repo}" --file "{}" --tag "v${_dateutc}"
+          sudo /bin/ls -1 /home/.tmp.kernel/_output/kernel/kernel-*-repos/packages/* 2>/dev/null | xargs --no-run-if-empty -I '{}' sudo /bin/bash scripts/.upload_file_to_github-release.sh --token ${{ secrets.GITHUB_TOKEN }} --user "${{ github.repository_owner }}" --repo "${_repo}" --file "{}" --tag "v${_dateutc}"
+          sleep 2
+          sudo /bin/rm -fr /home/.tmp.kernel
+
