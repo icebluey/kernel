@@ -228,7 +228,7 @@ BuildConflicts: rhbuildsys(DiskFree) < 500Mb
 Source0: https://www.kernel.org/pub/linux/kernel/v6.x/linux-%{LKAver}.tar.xz
 
 Source2: config-%{version}-x86_64
-#Source4: config-%{version}-aarch64
+#Source4: config-%%{version}-aarch64
 
 Source20: mod-denylist.sh
 Source21: mod-sign.sh
