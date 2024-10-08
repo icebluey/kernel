@@ -157,7 +157,7 @@
 # Packages that need to be installed before the kernel is installed,
 # as they will be used by the %%post scripts.
 #
-%define kernel_ml_prereq  coreutils, systemd >= 203-2, /usr/bin/kernel-install
+%define kernel_prereq  coreutils, systemd >= 203-2, /usr/bin/kernel-install
 %define initrd_prereq  dracut >= 027
 
 Name: kernel
@@ -264,25 +264,25 @@ The %{name} meta package.
 
 #
 # This macro does requires, provides, conflicts, obsoletes for a kernel package.
-#	%%kernel_ml_reqprovconf <subpackage>
-# It uses any kernel_ml_<subpackage>_conflicts and kernel_ml_<subpackage>_obsoletes
+#	%%kernel_reqprovconf <subpackage>
+# It uses any kernel_<subpackage>_conflicts and kernel_<subpackage>_obsoletes
 # macros defined above.
 #
-%define kernel_ml_reqprovconf \
+%define kernel_reqprovconf \
 Provides: %{name} = %{pkg_version}-%{pkg_release}\
 Provides: %{name}-%{_target_cpu} = %{pkg_version}-%{pkg_release}%{?1:+%{1}}\
 Provides: %{name}-drm-nouveau = 16\
 Provides: %{name}-uname-r = %{KVERREL}%{?1:+%{1}}\
-Requires(pre): %{kernel_ml_prereq}\
+Requires(pre): %{kernel_prereq}\
 Requires(pre): %{initrd_prereq}\
 Requires(pre): ((linux-firmware >= 20150904-56.git6ebf5d57) if linux-firmware)\
 Recommends: linux-firmware\
 Requires(preun): systemd >= 200\
 Conflicts: xfsprogs < 4.3.0-1\
 Conflicts: xorg-x11-drv-vmmouse < 13.0.99\
-%{expand:%%{?kernel_ml%{?1:_%{1}}_conflicts:Conflicts: %%{%{name}%{?1:_%{1}}_conflicts}}}\
-%{expand:%%{?kernel_ml%{?1:_%{1}}_obsoletes:Obsoletes: %%{%{name}%{?1:_%{1}}_obsoletes}}}\
-%{expand:%%{?kernel_ml%{?1:_%{1}}_provides:Provides: %%{%{name}%{?1:_%{1}}_provides}}}\
+%{expand:%%{?kernel%{?1:_%{1}}_conflicts:Conflicts: %%{%{name}%{?1:_%{1}}_conflicts}}}\
+%{expand:%%{?kernel%{?1:_%{1}}_obsoletes:Obsoletes: %%{%{name}%{?1:_%{1}}_obsoletes}}}\
+%{expand:%%{?kernel%{?1:_%{1}}_provides:Provides: %%{%{name}%{?1:_%{1}}_provides}}}\
 # We can't let RPM do the dependencies automatically because it'll then pick up\
 # a correct but undesirable perl dependency from the module headers which\
 # isn't required for the kernel proper to function.\
@@ -383,9 +383,9 @@ and simple manipulation of eBPF programs and maps.
 
 #
 # This macro creates a kernel-<subpackage>-devel package.
-#	%%kernel_ml_devel_package [-m] <subpackage> <pretty-name>
+#	%%kernel_devel_package [-m] <subpackage> <pretty-name>
 #
-%define kernel_ml_devel_package(m) \
+%define kernel_devel_package(m) \
 %package %{?1:%{1}-}devel\
 Summary: Development package for building %{name} modules to match the %{?2:%{2} }%{name}.\
 Provides: %{name}%{?1:-%{1}}-devel-%{_target_cpu} = %{version}-%{release}\
@@ -418,9 +418,9 @@ against the %{?2:%{2} }%{name} package.\
 #
 # This macro creates an empty kernel-<subpackage>-devel-matched package that
 # requires both the core and devel packages locked on the same version.
-#	%%kernel_ml_devel_matched_package [-m] <subpackage> <pretty-name>
+#	%%kernel_devel_matched_package [-m] <subpackage> <pretty-name>
 #
-%define kernel_ml_devel_matched_package(m) \
+%define kernel_devel_matched_package(m) \
 %package %{?1:%{1}-}devel-matched\
 Summary: Meta package to install matching core and devel packages for a given %{?2:%{2} }%{name}.\
 Requires: %{name}%{?1:-%{1}}-devel = %{version}-%{release}\
@@ -431,9 +431,9 @@ This meta package is used to install matching core and devel packages for a give
 
 #
 # This macro creates a kernel-<subpackage>-modules-extra package.
-#	%%kernel_ml_modules_extra_package [-m] <subpackage> <pretty-name>
+#	%%kernel_modules_extra_package [-m] <subpackage> <pretty-name>
 #
-%define kernel_ml_modules_extra_package(m) \
+%define kernel_modules_extra_package(m) \
 %package %{?1:%{1}-}modules-extra\
 Summary: Extra %{name} modules to match the %{?2:%{2} }%{name}.\
 Provides: %{name}%{?1:-%{1}}-modules-extra-%{_target_cpu} = %{version}-%{release}\
@@ -455,9 +455,9 @@ This package provides less commonly used %{name} modules for the %{?2:%{2} }%{na
 
 #
 # This macro creates a kernel-<subpackage>-modules package.
-#	%%kernel_ml_modules_package [-m] <subpackage> <pretty-name>
+#	%%kernel_modules_package [-m] <subpackage> <pretty-name>
 #
-%define kernel_ml_modules_package(m) \
+%define kernel_modules_package(m) \
 %package %{?1:%{1}-}modules\
 Summary: %{name} modules to match the %{?2:%{2}-}core %{name}.\
 Provides: %{name}%{?1:-%{1}}-modules-%{_target_cpu} = %{version}-%{release}\
@@ -478,9 +478,9 @@ This package provides commonly used %{name} modules for the %{?2:%{2}-}core %{na
 
 #
 # this macro creates a kernel-<subpackage> meta package.
-#	%%kernel_ml_meta_package <subpackage>
+#	%%kernel_meta_package <subpackage>
 #
-%define kernel_ml_meta_package() \
+%define kernel_meta_package() \
 %package %{1}\
 Summary: %{name} meta-package for the %{1} ${name}.\
 Requires: %{name}-%{1}-core-uname-r = %{KVERREL}+%{1}\
@@ -494,9 +494,9 @@ The meta-package for the %{1} %{name}.\
 #
 # This macro creates a kernel-<subpackage> and its -devel.
 #	%%define variant_summary The Linux kernel compiled for <configuration>
-#	%%kernel_ml_variant_package [-n <pretty-name>] [-m] <subpackage>
+#	%%kernel_variant_package [-n <pretty-name>] [-m] <subpackage>
 #
-%define kernel_ml_variant_package(n:m) \
+%define kernel_variant_package(n:m) \
 %package %{?1:%{1}-}core\
 Summary: %{variant_summary}.\
 Provides: %{name}-%{?1:%{1}-}core-uname-r = %{KVERREL}%{?1:+%{1}}\
@@ -505,20 +505,20 @@ Provides: installonlypkg(kernel)\
 %if %{-m:1}%{!-m:0}\
 Requires: %{name}-core-uname-r = %{KVERREL}\
 %endif\
-%{expand:%%kernel_ml_reqprovconf}\
+%{expand:%%kernel_reqprovconf}\
 %if %{?1:1} %{!?1:0} \
-%{expand:%%kernel_ml_meta_package %{?1:%{1}}}\
+%{expand:%%kernel_meta_package %{?1:%{1}}}\
 %endif\
-%{expand:%%kernel_ml_devel_package %{?1:%{1}} %{!?{-n}:%{1}}%{?{-n}:%{-n*}} %{-m:%{-m}}}\
-%{expand:%%kernel_ml_devel_matched_package %{?1:%{1}} %{!?{-n}:%{1}}%{?{-n}:%{-n*}} %{-m:%{-m}}}\
-%{expand:%%kernel_ml_modules_package %{?1:%{1}} %{!?{-n}:%{1}}%{?{-n}:%{-n*}} %{-m:%{-m}}}\
-%{expand:%%kernel_ml_modules_extra_package %{?1:%{1}} %{!?{-n}:%{1}}%{?{-n}:%{-n*}} %{-m:%{-m}}}\
+%{expand:%%kernel_devel_package %{?1:%{1}} %{!?{-n}:%{1}}%{?{-n}:%{-n*}} %{-m:%{-m}}}\
+%{expand:%%kernel_devel_matched_package %{?1:%{1}} %{!?{-n}:%{1}}%{?{-n}:%{-n*}} %{-m:%{-m}}}\
+%{expand:%%kernel_modules_package %{?1:%{1}} %{!?{-n}:%{1}}%{?{-n}:%{-n*}} %{-m:%{-m}}}\
+%{expand:%%kernel_modules_extra_package %{?1:%{1}} %{!?{-n}:%{1}}%{?{-n}:%{-n*}} %{-m:%{-m}}}\
 %{nil}
 
 # And, finally, the main -core package.
 
 %define variant_summary The Linux kernel.
-%kernel_ml_variant_package
+%kernel_variant_package
 %description core
 The %{name} package contains the Linux kernel (vmlinuz), the core of any
 Linux kernel based operating system. The %{name} package handles the basic
@@ -1246,12 +1246,12 @@ popd > /dev/null
 
 #
 # This macro defines a %%post script for a kernel*-devel package.
-#	%%kernel_ml_devel_post [<subpackage>]
+#	%%kernel_devel_post [<subpackage>]
 # Note we don't run hardlink if ostree is in use, as ostree is
 # a far more sophisticated hardlink implementation.
 # https://github.com/projectatomic/rpm-ostree/commit/58a79056a889be8814aa51f507b2c7a4dccee526
 #
-%define kernel_ml_devel_post() \
+%define kernel_devel_post() \
 %{expand:%%post %{?1:%{1}-}devel}\
 if [ -f /etc/sysconfig/kernel ]\
 then\
@@ -1269,9 +1269,9 @@ fi\
 #
 # This macro defines a %%post script for a kernel*-modules-extra package.
 # It also defines a %%postun script that does the same thing.
-#	%%kernel_ml_modules_extra_post [<subpackage>]
+#	%%kernel_modules_extra_post [<subpackage>]
 #
-%define kernel_ml_modules_extra_post() \
+%define kernel_modules_extra_post() \
 %{expand:%%post %{?1:%{1}-}modules-extra}\
 /sbin/depmod -a %{KVERREL}%{?1:+%{1}}\
 %{nil}\
@@ -1282,9 +1282,9 @@ fi\
 #
 # This macro defines a %%post script for a kernel*-modules package.
 # It also defines a %%postun script that does the same thing.
-#	%%kernel_ml_modules_post [<subpackage>]
+#	%%kernel_modules_post [<subpackage>]
 #
-%define kernel_ml_modules_post() \
+%define kernel_modules_post() \
 %{expand:%%post %{?1:%{1}-}modules}\
 /sbin/depmod -a %{KVERREL}%{?1:+%{1}}\
 %{nil}\
@@ -1293,10 +1293,10 @@ fi\
 %{nil}
 
 # This macro defines a %%posttrans script for a kernel package.
-#	%%kernel_ml_variant_posttrans [<subpackage>]
+#	%%kernel_variant_posttrans [<subpackage>]
 # More text can follow to go at the end of this variant's %%post.
 #
-%define kernel_ml_variant_posttrans() \
+%define kernel_variant_posttrans() \
 %{expand:%%posttrans %{?1:%{1}-}core}\
 if [ -x %{_sbindir}/weak-modules ]\
 then\
@@ -1307,14 +1307,14 @@ fi\
 
 #
 # This macro defines a %%post script for a kernel package and its devel package.
-#	%%kernel_ml_variant_post [-v <subpackage>] [-r <replace>]
+#	%%kernel_variant_post [-v <subpackage>] [-r <replace>]
 # More text can follow to go at the end of this variant's %%post.
 #
-%define kernel_ml_variant_post(v:r:) \
-%{expand:%%kernel_ml_devel_post %{?-v*}}\
-%{expand:%%kernel_ml_modules_post %{?-v*}}\
-%{expand:%%kernel_ml_modules_extra_post %{?-v*}}\
-%{expand:%%kernel_ml_variant_posttrans %{?-v*}}\
+%define kernel_variant_post(v:r:) \
+%{expand:%%kernel_devel_post %{?-v*}}\
+%{expand:%%kernel_modules_post %{?-v*}}\
+%{expand:%%kernel_modules_extra_post %{?-v*}}\
+%{expand:%%kernel_variant_posttrans %{?-v*}}\
 %{expand:%%post %{?-v*:%{-v*}-}core}\
 %{-r:\
 if [ `uname -i` == "x86_64" ] &&\
@@ -1325,9 +1325,9 @@ fi}\
 
 #
 # This macro defines a %%preun script for a kernel package.
-#	%%kernel_ml_variant_preun <subpackage>
+#	%%kernel_variant_preun <subpackage>
 #
-%define kernel_ml_variant_preun() \
+%define kernel_variant_preun() \
 %{expand:%%preun %{?1:%{1}-}core}\
 /bin/kernel-install remove %{KVERREL}%{?1:+%{1}} /lib/modules/%{KVERREL}%{?1:+%{1}}/vmlinuz || exit $?\
 if [ -x %{_sbindir}/weak-modules ]\
@@ -1336,8 +1336,8 @@ then\
 fi\
 %{nil}
 
-%kernel_ml_variant_preun
-%kernel_ml_variant_post -r kernel-smp
+%kernel_variant_preun
+%kernel_variant_post -r kernel-smp
 
 if [ -x /sbin/ldconfig ]
 then
@@ -1447,9 +1447,9 @@ fi
 #
 # This macro defines the %%files sections for a kernel package
 # and its devel package.
-#	%%kernel_ml_variant_files [-k vmlinux] <use_vdso> <condition> <subpackage>
+#	%%kernel_variant_files [-k vmlinux] <use_vdso> <condition> <subpackage>
 #
-%define kernel_ml_variant_files(k:) \
+%define kernel_variant_files(k:) \
 %if %{2}\
 %{expand:%%files -f %{name}-%{?3:%{3}-}core.list %{?1:-f %{name}-%{?3:%{3}-}ldsoconf.list} %{?3:%{3}-}core}\
 %{!?_licensedir:%global license %%doc}\
@@ -1495,5 +1495,5 @@ fi
 %endif\
 %{nil}
 
-%kernel_ml_variant_files %{_use_vdso} %{with_std}
+%kernel_variant_files %{_use_vdso} %{with_std}
 
