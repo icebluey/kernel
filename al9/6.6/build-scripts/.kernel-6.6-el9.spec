@@ -1,6 +1,6 @@
 # All global changes to build and install should follow this line.
 
-%global dist .el8
+%global dist .el9
 
 # Disable LTO in userspace packages.
 %global _lto_cflags %{nil}
