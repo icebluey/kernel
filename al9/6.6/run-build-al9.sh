@@ -17,7 +17,6 @@ docker cp ../.preinstall_al9 al9:/home/
 docker cp build-scripts al9:/home/
 docker exec al9 /bin/bash /home/.preinstall_al9
 docker exec al9 /bin/bash /home/build-scripts/00-run-all.sh
-rm -fr /home/.tmp.kernel
-mkdir /home/.tmp.kernel
-docker cp al9:/tmp/_output /home/.tmp.kernel/
+mkdir -p /tmp/_output_assets
+docker cp al9:/tmp/_output /tmp/_output_assets/
 exit
