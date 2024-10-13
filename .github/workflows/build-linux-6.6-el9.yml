@@ -41,7 +41,9 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ env._dateutc }}
-          files: /tmp/_output_assets/*
+          files: |
+            /tmp/_output_assets/_output/kernel/assets/*
+            /tmp/_output_assets/_output/kernel/kernel-**-repos/packages/*
 
       - name: Delete old release tag env
         run: |
