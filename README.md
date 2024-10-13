@@ -1,17 +1,17 @@
 ## Repo
 ```
-[rhel-8-for-x86_64-kernel-rpms]
+[el-8-for-x86_64-kernel-rpms]
 baseurl = file:///.repos/kernel
-name = Red Hat Enterprise Linux 8 for x86_64 - Kernel (RPMs)
+name = Enterprise Linux 8 for x86_64 - Kernel (RPMs)
 enabled = 1
 gpgcheck = 0
 proxy=_none_
 ```
 
 ```
-[rhel-9-for-x86_64-kernel-rpms]
+[el-9-for-x86_64-kernel-rpms]
 baseurl = file:///.repos/kernel
-name = Red Hat Enterprise Linux 9 for x86_64 - Kernel (RPMs)
+name = Enterprise Linux 9 for x86_64 - Kernel (RPMs)
 enabled = 1
 gpgcheck = 0
 proxy=_none_
