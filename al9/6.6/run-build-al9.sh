@@ -9,6 +9,8 @@ sleep 5
 echo
 lscpu
 echo
+cat /proc/cpuinfo
+echo
 if [ "$(cat /proc/cpuinfo | grep -i '^processor' | wc -l)" -gt 1 ]; then
     docker run --cpus="$(cat /proc/cpuinfo | grep -i '^processor' | wc -l).0" --hostname 'x86-040.build.eng.bos.redhat.com' --rm --name al9 -itd almalinux:9 bash
 else
