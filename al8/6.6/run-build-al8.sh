@@ -6,7 +6,14 @@ set -e
 cd "$(dirname "$0")"
 systemctl start docker
 sleep 5
-docker run --cpus="2.0" --hostname 'x86-040.build.eng.bos.redhat.com' --rm --name al8 -itd almalinux:8 bash
+echo
+lscpu
+echo
+if [ "$(cat /proc/cpuinfo | grep -i '^processor' | wc -l)" == "4" ]; then
+    docker run --cpus="4.0" --hostname 'x86-040.build.eng.bos.redhat.com' --rm --name al8 -itd almalinux:8 bash
+else
+    docker run --cpus="2.0" --hostname 'x86-040.build.eng.bos.redhat.com' --rm --name al8 -itd almalinux:8 bash
+fi
 sleep 2
 docker exec al8 yum clean all
 docker exec al8 yum makecache
