@@ -9,10 +9,10 @@ sleep 5
 echo
 lscpu
 echo
-if [ "$(cat /proc/cpuinfo | grep -i '^processor' | wc -l)" == "4" ]; then
-    docker run --cpus="4.0" --hostname 'x86-040.build.eng.bos.redhat.com' --rm --name al8 -itd almalinux:8 bash
+if [ "$(cat /proc/cpuinfo | grep -i '^processor' | wc -l)" -gt 1 ]; then
+    docker run --cpus="$(cat /proc/cpuinfo | grep -i '^processor' | wc -l).0" --hostname 'x86-040.build.eng.bos.redhat.com' --rm --name al8 -itd almalinux:8 bash
 else
-    docker run --cpus="2.0" --hostname 'x86-040.build.eng.bos.redhat.com' --rm --name al8 -itd almalinux:8 bash
+    docker run --hostname 'x86-040.build.eng.bos.redhat.com' --rm --name al8 -itd almalinux:8 bash
 fi
 sleep 2
 docker exec al8 yum clean all
