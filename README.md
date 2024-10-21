@@ -40,6 +40,8 @@ dnf config-manager --set-enabled plus
 
 yum makecache
 
+yum --disablerepo="*" --enablerepo=crb list available
+
 ```
 
 ```
