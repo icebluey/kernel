@@ -17,6 +17,32 @@ gpgcheck = 0
 proxy=_none_
 ```
 
+```
+[root@al9 ~]# yum --showduplicates list bpftool
+Last metadata expiration check: 0:27:07 ago on Mon Oct 21 11:23:17 2024.
+Installed Packages
+bpftool.x86_64                     7.3.0-427.40.1.el9_4                  @baseos                    
+Available Packages
+bpftool.x86_64                     6.6.57-20241020.el9                   el-9-for-x86_64-kernel-rpms
+bpftool.x86_64                     7.3.0-427.13.1.el9_4                  baseos                     
+bpftool.x86_64                     7.3.0-427.16.1.el9_4                  baseos                     
+bpftool.x86_64                     7.3.0-427.18.1.el9_4                  baseos                     
+bpftool.x86_64                     7.3.0-427.20.1.el9_4                  baseos                     
+bpftool.x86_64                     7.3.0-427.22.1.el9_4                  baseos                     
+bpftool.x86_64                     7.3.0-427.24.1.el9_4                  baseos                     
+bpftool.x86_64                     7.3.0-427.26.1.el9_4                  baseos                     
+bpftool.x86_64                     7.3.0-427.28.1.el9_4                  baseos                     
+bpftool.x86_64                     7.3.0-427.31.1.el9_4                  baseos                     
+bpftool.x86_64                     7.3.0-427.33.1.el9_4                  baseos                     
+bpftool.x86_64                     7.3.0-427.35.1.el9_4                  baseos                     
+bpftool.x86_64                     7.3.0-427.37.1.el9_4                  baseos                     
+bpftool.x86_64                     7.3.0-427.40.1.el9_4                  baseos                     
+[root@al9 ~]# 
+[root@al9 ~]# yum install bpftool-6.6.57-20241020.el9
+
+```
+
+
 查询所有repo
 ```
 [root@al9 ~]# yum repolist
