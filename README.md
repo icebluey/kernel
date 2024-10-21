@@ -20,15 +20,15 @@ proxy=_none_
 查询所有repo
 ```
 [root@al9 ~]# yum repolist
-repo id                                                                            repo name
-appstream                                                                          AlmaLinux 9 - AppStream
-baseos                                                                             AlmaLinux 9 - BaseOS
-crb                                                                                AlmaLinux 9 - CRB
-el-9-for-x86_64-kernel-rpms                                                        Enterprise Linux 9 for x86_64 - Kernel (RPMs)
-epel                                                                               Extra Packages for Enterprise Linux 9 - x86_64
-epel-cisco-openh264                                                                Extra Packages for Enterprise Linux 9 openh264 (From Cisco) - x86_64
-extras                                                                             AlmaLinux 9 - Extras
-plus                                                                               AlmaLinux 9 - Plus
+repo id                                      repo name
+appstream                                    AlmaLinux 9 - AppStream
+baseos                                       AlmaLinux 9 - BaseOS
+crb                                          AlmaLinux 9 - CRB
+el-9-for-x86_64-kernel-rpms                  Enterprise Linux 9 for x86_64 - Kernel (RPMs)
+epel                                         Extra Packages for Enterprise Linux 9 - x86_64
+epel-cisco-openh264                          Extra Packages for Enterprise Linux 9 openh264 (From Cisco) - x86_64
+extras                                       AlmaLinux 9 - Extras
+plus                                         AlmaLinux 9 - Plus
 [root@al9 ~]# 
 
 yum repolist all/enabled/disabled
