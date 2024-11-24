@@ -35,12 +35,16 @@
 %define with_bpftool      %{?_without_bpftool:      0} %{?!_without_bpftool:      1}
 # vsdo install
 %define with_vdso_install %{?_without_vdso_install: 0} %{?!_without_vdso_install: 1}
+# gcc12
+%define with_gcc12    %{?_without_gcc12:    0} %{?!_without_gcc12:    1}
 
 # Kernel, devel, headers, perf, tools and bpftool.
 %ifarch x86_64
 %define with_doc 0
 %define doc_build_fail true
 %define zipmodules 1
+### as of kernel-6.5.4, no more bpftool -ay
+%define with_bpftool 0
 %endif
 
 # Documentation.
@@ -92,6 +96,11 @@ Provides: kernel = %{version}-%{release}
 Provides: installonlypkg(kernel)
 Requires: %{name}-core-uname-r = %{KVERREL}
 Requires: %{name}-modules-uname-r = %{KVERREL}
+
+%if %{with_gcc12}
+BuildRequires: gcc-toolset-12-annobin-plugin-gcc
+%endif
+
 BuildRequires: bash bc binutils bison bzip2 diffutils dwarves elfutils-devel
 BuildRequires: findutils flex gawk gcc git gzip hmaccalc hostname kmod m4
 BuildRequires: make net-tools openssl openssl-devel patch perl-Carp
@@ -104,7 +113,8 @@ BuildRequires: asciidoc python3-sphinx xmlto
 BuildRequires: asciidoc audit-libs-devel binutils-devel bison flex
 BuildRequires: java-devel libcap-devel newt-devel numactl-devel
 BuildRequires: perl(ExtUtils::Embed) xmlto xz-devel zlib-devel
-BuildRequires: libtraceevent-devel libpfm-devel
+BuildRequires: libtraceevent-devel
+BuildRequires: libasan libubsan
 %endif
 %if %{with_tools}
 BuildRequires: asciidoc gettext libcap-devel libnl3-devel ncurses-devel pciutils-devel
@@ -138,7 +148,7 @@ The %{name} meta package.
 #
 # This macro supplies the requires, provides, conflicts
 # and obsoletes for the kernel package.
-#       %%kernel_reqprovconf <subpackage>
+#	%%kernel_reqprovconf <subpackage>
 #
 %define kernel_reqprovconf \
 Provides: %{name} = %{version}-%{release}\
@@ -227,6 +237,15 @@ Obsoletes: cpuspeed < 1:1.5-16
 Provides:  kernel-tools = %{version}-%{release}
 Conflicts: kernel-tools < %{version}-%{release}
 Requires: %{name}-tools-libs = %{version}-%{release}
+
+# kernel vs kernel-lt conflict
+%if "%{name}" == "kernel"
+Conflicts: kernel-lt-tools
+%else
+# it's kernel-lt
+Conflicts: kernel-tools
+%endif
+
 %define __requires_exclude ^%{_bindir}/python
 %description -n %{name}-tools
 This package contains the tools/ directory and its supporting
@@ -238,6 +257,15 @@ Group: Development/System
 License: GPLv2
 Provides:  kernel-tools-libs = %{version}-%{release}
 Conflicts: kernel-tools-libs < %{version}-%{release}
+
+# kernel vs kernel-lt conflict
+%if "%{name}" == "kernel"
+Conflicts: kernel-lt-tools-libs
+%else
+# it's kernel-lt
+Conflicts: kernel-tools-libs
+%endif
+
 %description -n %{name}-tools-libs
 This package contains the libraries built from the
 tools/ directory, derived from the kernel source.
@@ -252,6 +280,15 @@ Provides:  cpupowerutils-devel = 1:009-0.6.p1
 Obsoletes: cpupowerutils-devel < 1:009-0.6.p1
 Provides:  kernel-tools-libs-devel = %{version}-%{release}
 Conflicts: kernel-tools-libs-devel < %{version}-%{release}
+
+# kernel vs kernel-lt conflict
+%if "%{name}" == "kernel"
+Conflicts: kernel-lt-tools-libs-devel
+%else
+# it's kernel-lt
+Conflicts: kernel-tools-libs-devel
+%endif
+
 %description -n %{name}-tools-libs-devel
 This package contains the development files for the tools/ directory
 libraries, derived from the kernel source.
@@ -268,7 +305,7 @@ manipulation of eBPF programs and maps.
 
 #
 # This macro creates a kernel-<subpackage>-devel package.
-#       %%kernel_devel_package <subpackage> <pretty-name>
+#	%%kernel_devel_package <subpackage> <pretty-name>
 #
 %define kernel_devel_package() \
 %package %{?1:%{1}-}devel\
@@ -294,7 +331,7 @@ against the %{?2:%{2} }kernel package.\
 
 #
 # This macro creates a kernel-<subpackage>-modules-extra package.
-#       %%kernel_modules_extra_package <subpackage> <pretty-name>
+#	%%kernel_modules_extra_package <subpackage> <pretty-name>
 #
 %define kernel_modules_extra_package() \
 %package %{?1:%{1}-}modules-extra\
@@ -316,7 +353,7 @@ This package provides less commonly used kernel modules for the %{?2:%{2} }kerne
 
 #
 # This macro creates a kernel-<subpackage>-modules package.
-#       %%kernel_modules_package <subpackage> <pretty-name>
+#	%%kernel_modules_package <subpackage> <pretty-name>
 #
 %define kernel_modules_package() \
 %package %{?1:%{1}-}modules\
@@ -337,7 +374,7 @@ This package provides commonly used kernel modules for the %{?2:%{2}-}core kerne
 
 #
 # This macro creates a kernel-<subpackage> meta package.
-#       %%kernel_meta_package <subpackage>
+#	%%kernel_meta_package <subpackage>
 #
 %define kernel_meta_package() \
 %package %{1}\
@@ -354,7 +391,7 @@ The meta-package for the %{1} kernel\
 #
 # This macro creates a kernel-<subpackage>
 # and its corresponding devel package.
-#       %%kernel_variant_package [-n <pretty-name>] <subpackage>
+#	%%kernel_variant_package [-n <pretty-name>] <subpackage>
 #
 %define kernel_variant_package(n:) \
 %package %{?1:%{1}-}core\
@@ -386,6 +423,10 @@ of the OS: memory allocation, process allocation, device I/O, etc.
 %define _build_id_links none
 
 %prep
+%if %{with_gcc12}
+. /opt/rh/gcc-toolset-12/enable
+%endif
+
 %setup -q -n %{name}-%{version} -c
 %{__mv} linux-%{LKAver} linux-%{version}-%{release}.%{_target_cpu}
 
@@ -403,12 +444,12 @@ pushd linux-%{KVERREL} > /dev/null
 
 %ifarch x86_64
 %{__cp} config-%{version}-%{_target_cpu} .config
-%{__make} -s ARCH=%{_target_cpu} listnewconfig | %{__grep} -E '^CONFIG_' > .newoptions || true
-if [ -s .newoptions ]; then
-    %{__cat} .newoptions
+%{__make} -s ARCH=%{_target_cpu} listnewconfig | %{__grep} -E '^CONFIG_' > newoptions-el8-%{_target_cpu}.txt || true
+if [ -s newoptions-el8-%{_target_cpu}.txt ]; then
+    %{__cat} newoptions-el8-%{_target_cpu}.txt
     #exit 1
 fi
-%{__rm} -f .newoptions
+%{__rm} -f newoptions-el8-%{_target_cpu}.txt
 %endif
 
 %{__mv} COPYING COPYING-%{version}
@@ -431,15 +472,17 @@ done | %{_bindir}/xargs --no-run-if-empty pathfix.py -i %{__python3} -p -n | \
 popd > /dev/null
 
 %build
+%if %{with_gcc12}
+. /opt/rh/gcc-toolset-12/enable
+%endif
+
 pushd linux-%{KVERREL} > /dev/null
 
 %ifarch x86_64
 %if %{with_default}
 %{__cp} config-%{version}-%{_target_cpu} .config
 
-%{__make} -s ARCH=%{_target_cpu} olddefconfig
-
-%{__rm} -f .config.old
+%{__make} -s ARCH=%{_target_cpu} oldconfig
 
 %{__make} -s ARCH=%{_target_cpu} %{?_smp_mflags} bzImage
 
@@ -521,6 +564,10 @@ popd > /dev/null
 popd > /dev/null
 
 %install
+%if %{with_gcc12}
+. /opt/rh/gcc-toolset-12/enable
+%endif
+
 pushd linux-%{KVERREL} > /dev/null
 
 %{__rm} -rf $RPM_BUILD_ROOT
@@ -542,7 +589,7 @@ KernelVer=%{version}-%{release}.%{_target_cpu}
     %{__os_install_post} \
     if [ "%{zipmodules}" -eq "1" ]; then \
         %{_bindir}/find $RPM_BUILD_ROOT/lib/modules/ -name '*.ko' -type f | \
-            %{_bindir}/xargs --no-run-if-empty -P%{zcpu} %{__xz} -9 \
+            %{_bindir}/xargs --no-run-if-empty -P%{zcpu} %{__xz} \
     fi \
 %{nil}
 
@@ -576,7 +623,7 @@ if %{__grep} -q '^CONFIG_XEN=y$' .config; then
 # fields.  In Xen guest kernels, the vDSO tells the dynamic linker to
 # search in nosegneg subdirectories and to match this extra hwcap bit
 # in the ld.so.cache file.
-#hwcap 1 nosegneg"
+hwcap 1 nosegneg"
 fi
 if [ ! -s ldconfig-%{name}.conf ]; then
     echo > ldconfig-%{name}.conf "\
@@ -882,9 +929,9 @@ popd > /dev/null
 # because they might also install their own set of header files.
 # Compute a content hash to export as Provides: kernel-headers-checksum.
 HEADERS_CHKSUM=$(export LC_ALL=C; %{_bindir}/find $RPM_BUILD_ROOT/usr/include -name '*.h' -type f \
-                        ! -path $RPM_BUILD_ROOT/usr/include/linux/version.h | \
-                        %{_bindir}/sort | %{_bindir}/xargs %{__cat} | %{_bindir}/sha1sum - | \
-                        %{_bindir}/cut -f1 -d' ');
+			! -path $RPM_BUILD_ROOT/usr/include/linux/version.h | \
+			%{_bindir}/sort | %{_bindir}/xargs %{__cat} | %{_bindir}/sha1sum - | \
+			%{_bindir}/cut -f1 -d' ');
 # Export the checksum via the usr/include/linux/version.h file so the dynamic
 # find-provides can obtain the hash to update it accordingly.
 echo "#define KERNEL_HEADERS_CHECKSUM \"$HEADERS_CHKSUM\"" >> $RPM_BUILD_ROOT/usr/include/linux/version.h
@@ -925,7 +972,7 @@ fi
 
 #
 # This macro defines a %%post script for a kernel*-devel package.
-#       %%kernel_devel_post [<subpackage>]
+#	%%kernel_devel_post [<subpackage>]
 #
 %define kernel_devel_post() \
 %{expand:%%post %{?1:%{1}-}devel}\
@@ -943,7 +990,7 @@ fi\
 #
 # This macro defines a %%post script for a kernel*-modules-extra package.
 # It also defines a %%postun script that does the same thing.
-#       %%kernel_modules_extra_post [<subpackage>]
+#	%%kernel_modules_extra_post [<subpackage>]
 #
 %define kernel_modules_extra_post() \
 %{expand:%%post %{?1:%{1}-}modules-extra}\
@@ -956,7 +1003,7 @@ fi\
 #
 # This macro defines a %%post script for a kernel*-modules package.
 # It also defines a %%postun script that does the same thing.
-#       %%kernel_modules_post [<subpackage>]
+#	%%kernel_modules_post [<subpackage>]
 #
 %define kernel_modules_post() \
 %{expand:%%post %{?1:%{1}-}modules}\
@@ -967,7 +1014,7 @@ fi\
 %{nil}
 
 # This macro defines a %%posttrans script for a kernel package.
-#       %%kernel_variant_posttrans [<subpackage>]
+#	%%kernel_variant_posttrans [<subpackage>]
 #
 %define kernel_variant_posttrans() \
 %{expand:%%posttrans %{?1:%{1}-}core}\
@@ -979,7 +1026,7 @@ fi\
 
 #
 # This macro defines a %%post script for a kernel package and its devel package.
-#       %%kernel_variant_post [-v <subpackage>] [-r <replace>]
+#	%%kernel_variant_post [-v <subpackage>] [-r <replace>]
 #
 %define kernel_variant_post(v:r:) \
 %{expand:%%kernel_devel_post %{?-v*}}\
@@ -995,7 +1042,7 @@ fi}\
 
 #
 # This macro defines a %%preun script for a kernel package.
-#       %%kernel_variant_preun <subpackage>
+#	%%kernel_variant_preun <subpackage>
 #
 %define kernel_variant_preun() \
 %{expand:%%preun %{?1:%{1}-}core}\
@@ -1095,7 +1142,7 @@ fi
 #
 # This macro defines the %%files sections for the kernel package
 # and its corresponding devel package.
-#       %%kernel_variant_files [-k vmlinux] <condition> <subpackage>
+#	%%kernel_variant_files [-k vmlinux] <condition> <subpackage>
 #
 %define kernel_variant_files(k:) \
 %if %{2}\

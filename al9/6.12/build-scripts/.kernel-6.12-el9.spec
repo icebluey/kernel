@@ -1,7 +1,5 @@
 # All global changes to build and install should follow this line.
 
-%global dist .el9
-
 # Disable LTO in userspace packages.
 %global _lto_cflags %{nil}
 
@@ -16,6 +14,8 @@
 # the %%install section will not see them.
 %global __spec_install_pre %{___build_pre}
 
+%global dist .el9
+
 # Kernel has several large (hundreds of mbytes) rpms, they take ~5 mins
 # to compress by single-threaded xz. Switch to threaded compression,
 # and from level 2 to 3 to keep compressed sizes close to "w2" results.
@@ -26,7 +26,7 @@
 %global _binary_payload w3T.xzdio
 
 # Define the version of the Linux Kernel Archive tarball.
-%global LKAver 6.6.54
+%global LKAver 6.12.1
 
 # Define the buildid, if required.
 #global buildid .local
@@ -228,7 +228,7 @@ BuildConflicts: rhbuildsys(DiskFree) < 500Mb
 Source0: https://www.kernel.org/pub/linux/kernel/v6.x/linux-%{LKAver}.tar.xz
 
 Source2: config-%{version}-x86_64
-#Source4: config-%%{version}-aarch64
+Source4: config-%{version}-aarch64
 
 Source20: mod-denylist.sh
 Source21: mod-sign.sh
@@ -343,6 +343,12 @@ Obsoletes: cpufrequtils < 1:009-0.6.p1
 Provides:  cpufrequtils = 1:009-0.6.p1
 Obsoletes: cpuspeed < 1:1.5-16
 Requires: %{name}-tools-libs = %{version}-%{release}
+%if "%{name}" == "kernel"
+Conflicts: kernel-lt-tools
+%else
+# it's kernel-lt
+Conflicts: kernel-tools
+%endif
 %define __requires_exclude ^%{_bindir}/python
 %description -n %{name}-tools
 This package contains the tools/ directory from the Linux kernel
@@ -353,6 +359,12 @@ Summary: Libraries for the %{name}-tools.
 License: GPLv2
 Obsoletes: kernel-tools-libs < %{version}
 Provides:  kernel-tools-libs = %{version}-%{release}
+%if "%{name}" == "kernel"
+Conflicts: kernel-lt-tools-libs
+%else
+# it's kernel-lt
+Conflicts: kernel-tools-libs
+%endif
 %description -n %{name}-tools-libs
 This package contains the libraries built from the tools/ directory
 of the Linux kernel source.
@@ -367,6 +379,12 @@ Provides:  cpupowerutils-devel = 1:009-0.6.p1
 Provides: %{name}-tools-devel
 Requires: %{name}-tools-libs = %{version}-%{release}
 Requires: %{name}-tools = %{version}-%{release}
+%if "%{name}" == "kernel"
+Conflicts: kernel-lt-tools-libs-devel
+%else
+# it's kernel-lt
+Conflicts: kernel-tools-libs-devel
+%endif
 %description -n %{name}-tools-libs-devel
 This package contains the development files for the tools/ directory
 of the Linux kernel source.
@@ -576,7 +594,7 @@ pathfix.py -i "%{__python3} %{py3_shbang_opts}" -n -p \
 mv COPYING COPYING-%{version}-%{release}
 
 cp -a %{SOURCE2} .
-#cp -a %{SOURCE4} .
+cp -a %{SOURCE4} .
 
 # Set the EXTRAVERSION string in the top level Makefile.
 sed -i "s@^EXTRAVERSION.*@EXTRAVERSION = -%{release}.%{_target_cpu}@" Makefile
@@ -871,7 +889,7 @@ cp -a --parents tools/include/tools/le_byteshift.h $RPM_BUILD_ROOT/lib/modules/%
 cp -a --parents tools/include/linux/compiler* $RPM_BUILD_ROOT/lib/modules/%{KVERREL}/build
 cp -a --parents tools/include/linux/types.h $RPM_BUILD_ROOT/lib/modules/%{KVERREL}/build
 cp -a --parents tools/build/Build.include $RPM_BUILD_ROOT/lib/modules/%{KVERREL}/build
-cp --parents tools/build/Build $RPM_BUILD_ROOT/lib/modules/%{KVERREL}/build
+# cp --parents tools/build/Build $RPM_BUILD_ROOT/lib/modules/%{KVERREL}/build
 cp --parents tools/build/fixdep.c $RPM_BUILD_ROOT/lib/modules/%{KVERREL}/build
 cp --parents tools/objtool/sync-check.sh $RPM_BUILD_ROOT/lib/modules/%{KVERREL}/build
 cp -a --parents tools/bpf/resolve_btfids $RPM_BUILD_ROOT/lib/modules/%{KVERREL}/build
