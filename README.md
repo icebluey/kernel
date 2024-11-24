@@ -173,4 +173,61 @@ done
 
 ```
 
+# fedora el8
+```
+cat kernel-ml-6.12.spec | sed -e '/^%changelog/,$d' > ../kernel-6.12.spec
+sed 's|kernel-ml|kernel|g' -i kernel-6.12.spec
+sed 's|Kernel-ml|Kernel|g' -i kernel-6.12.spec
+sed 's|kernel_ml|kernel|g' -i kernel-6.12.spec
+sed 's|Kernel_ml|Kernel|g' -i kernel-6.12.spec
+sed '/^%global __spec_install_pre/a\\n%global dist .el8' -i kernel-6.12.spec
+
+# Patch
+Patch1: bpftool-feature.patch
+
+# Do not package the source tarball.
+#NoSource: 0
+
+%setup -q -n %{name}-%{version} -c
+mv linux-%{LKAver} linux-%{KVERREL}
+pushd linux-%{KVERREL} > /dev/null
+
+%patch1 -p1
+
+olddefconfig
+
+%{__rm} -f .config.old
+
+%{_bindir}/xargs --no-run-if-empty -P%{zcpu} %{__xz} -9
+```
+
+# fedora el9
+```
+cat kernel-ml-6.12.spec | sed -e '/^%changelog/,$d' > ../kernel-6.12.spec
+sed 's|kernel-ml|kernel|g' -i kernel-6.12.spec
+sed 's|Kernel-ml|Kernel|g' -i kernel-6.12.spec
+sed 's|kernel_ml|kernel|g' -i kernel-6.12.spec
+sed 's|Kernel_ml|Kernel|g' -i kernel-6.12.spec
+sed '/^%global __spec_install_pre/a\\n%global dist .el9' -i kernel-6.12.spec
+
+# Patch
+Patch1: bpftool-feature.patch
+
+# Do not package the source tarball.
+#NoSource: 0
+
+%setup -q -n %{name}-%{version} -c
+mv linux-%{LKAver} linux-%{KVERREL}
+pushd linux-%{KVERREL} > /dev/null
+
+%patch1 -p1
+
+olddefconfig
+
+%{__rm} -f .config.old
+
+%{_bindir}/xargs --no-run-if-empty -P%{zcpu} %{__xz} -9
+```
+
+
 
