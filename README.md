@@ -173,6 +173,55 @@ done
 
 ```
 
+
+# fedora config
+```
+
+General setup ->
+    Kernel compression mode (XZ)  --->
+    Preemption Model (Fully Preemptible Kernel (Real-Time))  --->
+    <*> Kernel .config support
+
+Networking support > Networking options > TCP: advanced congestion control
+    <*>   BBR TCP
+
+Networking support > Networking options > Network packet filtering framework (Netfilter) > Core Netfilter Configuration
+
+Networking support > Networking options
+    <M> The DCCP Protocol  --->
+    <M>     Multi-Protocol Over ATM (MPOA) support
+    <M> CCITT X.25 Packet Layer
+    <M> LAPB Data Link Driver
+    <M> Phonet protocols family
+    <M>   TUN device for Qualcomm IPC Router
+  
+
+Networking support > Networking options > Distributed Switch Architecture
+
+Networking support > Networking options > QoS and/or fair queueing
+    <*>   Ingress/classifier-action Qdisc
+        *** Classification ***
+    <*>   BPF-based classifier
+    [*]   Actions
+
+Networking support
+    <M>   CAIF support  --->
+
+Networking support > NFC subsystem support
+Networking support > NFC subsystem support > Near Field Communication (NFC) devices
+
+Security options
+    Default integrity hash algorithm (SHA512)  --->
+
+Cryptographic API > Public-key cryptography
+    <*> Curve25519
+Cryptographic API > AEAD (authenticated encryption with associated data) ciphers
+    <*> ChaCha20-Poly1305
+
+Cryptographic API > Accelerated Cryptographic Algorithms for CPU (x86)
+
+```
+
 # fedora el8
 ```
 cat kernel-ml-6.12.spec | sed -e '/^%changelog/,$d' > ../kernel-6.12.spec
