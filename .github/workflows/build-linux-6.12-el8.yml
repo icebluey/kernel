@@ -1,4 +1,4 @@
-name: build-linux-6.6-el9
+name: build-linux-6.12-el8
 on:
   #push:
   #  branches: [ "master" ]
@@ -20,9 +20,9 @@ jobs:
           sudo /bin/rm -fr /tmp/*
           sudo /bin/bash scripts/install-docker.sh
 
-      - name: Build kernel 6.6 el9
+      - name: Build kernel 6.12 el8
         run: |
-          sudo /bin/bash al9/6.6/run-build-al9.sh
+          sudo /bin/bash al8/6.12/run-build-al8.sh
           sudo /bin/systemctl stop docker.socket docker.service containerd.service
           sudo /bin/rm -fr /var/lib/docker/* /var/lib/containerd/* /mnt/docker-data/*
 
