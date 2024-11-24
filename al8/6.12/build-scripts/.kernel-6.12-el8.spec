@@ -44,7 +44,7 @@
 %define doc_build_fail true
 %define zipmodules 1
 ### as of kernel-6.5.4, no more bpftool -ay
-%define with_bpftool 0
+#%%define with_bpftool 0
 %endif
 
 # Documentation.
