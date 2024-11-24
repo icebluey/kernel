@@ -228,7 +228,7 @@ BuildConflicts: rhbuildsys(DiskFree) < 500Mb
 Source0: https://www.kernel.org/pub/linux/kernel/v6.x/linux-%{LKAver}.tar.xz
 
 Source2: config-%{version}-x86_64
-Source4: config-%{version}-aarch64
+#Source4: config-%%{version}-aarch64
 
 Source20: mod-denylist.sh
 Source21: mod-sign.sh
@@ -594,7 +594,7 @@ pathfix.py -i "%{__python3} %{py3_shbang_opts}" -n -p \
 mv COPYING COPYING-%{version}-%{release}
 
 cp -a %{SOURCE2} .
-cp -a %{SOURCE4} .
+#cp -a %%{SOURCE4} .
 
 # Set the EXTRAVERSION string in the top level Makefile.
 sed -i "s@^EXTRAVERSION.*@EXTRAVERSION = -%{release}.%{_target_cpu}@" Makefile
@@ -638,7 +638,9 @@ pushd linux-%{KVERREL} > /dev/null
 %ifarch x86_64 || aarch64
 cp config-%{version}-%{_target_cpu} .config
 
-%{__make} -s ARCH=%{bldarch} oldconfig
+%{__make} -s ARCH=%{bldarch} olddefconfig
+
+%{__rm} -f .config.old
 
 %if %{signkernel} || %{signmodules}
 cp %{SOURCE23} certs/
@@ -741,7 +743,7 @@ if [ "%{signmodules}" -eq "1" ]; then \
 	fi \
 fi \
 if [ "%{zipmodules}" -eq "1" ]; then \
-	find $RPM_BUILD_ROOT/lib/modules/ -name '*.ko' -type f | xargs --no-run-if-empty -P%{zcpu} xz \
+	find $RPM_BUILD_ROOT/lib/modules/ -name '*.ko' -type f | xargs --no-run-if-empty -P%{zcpu} xz -9 \
 fi \
 %{nil}
 

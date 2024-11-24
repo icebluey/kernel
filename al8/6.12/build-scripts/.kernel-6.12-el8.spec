@@ -482,7 +482,9 @@ pushd linux-%{KVERREL} > /dev/null
 %if %{with_default}
 %{__cp} config-%{version}-%{_target_cpu} .config
 
-%{__make} -s ARCH=%{_target_cpu} oldconfig
+%{__make} -s ARCH=%{_target_cpu} olddefconfig
+
+%{__rm} -f .config.old
 
 %{__make} -s ARCH=%{_target_cpu} %{?_smp_mflags} bzImage
 
@@ -589,7 +591,7 @@ KernelVer=%{version}-%{release}.%{_target_cpu}
     %{__os_install_post} \
     if [ "%{zipmodules}" -eq "1" ]; then \
         %{_bindir}/find $RPM_BUILD_ROOT/lib/modules/ -name '*.ko' -type f | \
-            %{_bindir}/xargs --no-run-if-empty -P%{zcpu} %{__xz} \
+            %{_bindir}/xargs --no-run-if-empty -P%{zcpu} %{__xz} -9 \
     fi \
 %{nil}
 
@@ -623,7 +625,7 @@ if %{__grep} -q '^CONFIG_XEN=y$' .config; then
 # fields.  In Xen guest kernels, the vDSO tells the dynamic linker to
 # search in nosegneg subdirectories and to match this extra hwcap bit
 # in the ld.so.cache file.
-hwcap 1 nosegneg"
+#hwcap 1 nosegneg"
 fi
 if [ ! -s ldconfig-%{name}.conf ]; then
     echo > ldconfig-%{name}.conf "\
