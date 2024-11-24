@@ -25,6 +25,9 @@ docker exec al8 /bin/bash -c 'rm -fr /tmp/*'
 docker cp ../.preinstall_al8 al8:/home/
 docker cp build-scripts al8:/home/
 docker exec al8 /bin/bash /home/.preinstall_al8
+echo
+docker exec al8 cat /etc/os-release
+echo
 docker exec al8 /bin/bash /home/build-scripts/00-run-all.sh
 mkdir -p /tmp/_output_assets
 docker cp al8:/tmp/_output /tmp/_output_assets/
