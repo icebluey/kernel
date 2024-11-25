@@ -63,13 +63,22 @@ fi
 
 echo >> "${_kernel_spec_file}"
 
+# System libbpf
+#_LIBBPF_MAJOR_VERSION=$(rpm -qa | grep -i '^libbpf-[0-9]' | sed -e 's|libbpf-||g' -e 's|-[0-9].*||g' | awk -F. '{print $1}')
+#_LIBBPF_MINOR_VERSION=$(rpm -qa | grep -i '^libbpf-[0-9]' | sed -e 's|libbpf-||g' -e 's|-[0-9].*||g' | awk -F. '{print $2}')
 
-_LIBBPF_MAJOR_VERSION=$(rpm -qa | grep -i '^libbpf-[0-9]' | sed -e 's|libbpf-||g' -e 's|-[0-9].*||g' | awk -F. '{print $1}')
-_LIBBPF_MINOR_VERSION=$(rpm -qa | grep -i '^libbpf-[0-9]' | sed -e 's|libbpf-||g' -e 's|-[0-9].*||g' | awk -F. '{print $2}')
+# Source libbpf
+_tmp_dir="$(mktemp -d)"
+tar -xof linux-*.tar* -C "${_tmp_dir}"/
+_LIBBPF_MAJOR_VERSION=$(cat "${_tmp_dir}"/linux-*/tools/lib/bpf/libbpf_version.h | grep -i '#define LIBBPF_MAJOR_VERSION' | head -n 1 | awk '{print $NF}')
+_LIBBPF_MINOR_VERSION=$(cat "${_tmp_dir}"/linux-*/tools/lib/bpf/libbpf_version.h | grep -i '#define LIBBPF_MINOR_VERSION' | head -n 1 | awk '{print $NF}')
+
 _BPFTOOL_MAJOR_VERSION=$((_LIBBPF_MAJOR_VERSION+6))
 _BPFTOOL_MINOR_VERSION=${_LIBBPF_MINOR_VERSION}
 _bpftoolversion="${_BPFTOOL_MAJOR_VERSION}.${_BPFTOOL_MINOR_VERSION}.0"
 sed "s|^%define bpftoolversion .*|%define bpftoolversion ${_bpftoolversion}|g" -i "${_kernel_spec_file}"
+rm -fr "${_tmp_dir}"
+_tmp_dir=''
 
 echo
 grep '%global LKAver' "${_kernel_spec_file}"
