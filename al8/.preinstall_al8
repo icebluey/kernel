@@ -64,7 +64,9 @@ yum install -y glibc-all-langpacks
 # For building kernel
 yum install -y libpfm-devel libpfm
 yum install -y libtraceevent-devel libtraceevent
-yum install -y libbpf-devel libbabeltrace-devel
+yum install -y libbabeltrace-devel
+yum install -y libbpf-devel
+yum install -y libbpf
 
 # For kernel 6.12
 yum install -y gcc-toolset-12-annobin-plugin-gcc
