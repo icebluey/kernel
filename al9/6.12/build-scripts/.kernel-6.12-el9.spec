@@ -399,6 +399,12 @@ License: GPLv2
 %description -n bpftool
 This package contains the bpftool, which allows inspection
 and simple manipulation of eBPF programs and maps.
+
+# Setting "Version:" above overrides the internal {version} macro,
+# need to restore it here
+%define version %{pkg_version}
+
+# with_bpftool
 %endif
 
 #
