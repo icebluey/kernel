@@ -63,8 +63,18 @@ fi
 
 echo >> "${_kernel_spec_file}"
 
+
+_LIBBPF_MAJOR_VERSION=$(rpm -qa | grep -i '^libbpf-[0-9]' | sed -e 's|libbpf-||g' -e 's|-[0-9].*||g' | awk -F. '{print $1}')
+_LIBBPF_MINOR_VERSION=$(rpm -qa | grep -i '^libbpf-[0-9]' | sed -e 's|libbpf-||g' -e 's|-[0-9].*||g' | awk -F. '{print $2}')
+_BPFTOOL_MAJOR_VERSION=$((_LIBBPF_MAJOR_VERSION+6))
+_BPFTOOL_MINOR_VERSION=${_LIBBPF_MINOR_VERSION}
+_bpftoolversion="${_BPFTOOL_MAJOR_VERSION}.${_BPFTOOL_MINOR_VERSION}.0"
+sed "s|^%define bpftoolversion .*|%define bpftoolversion ${_bpftoolversion}|g" -i "${_kernel_spec_file}"
+
 echo
 grep '%global LKAver' "${_kernel_spec_file}"
+echo
+grep '%define bpftoolversion' "${_kernel_spec_file}"
 echo
 grep -i 'https://www.kernel.org/pub/linux/kernel/' "${_kernel_spec_file}"
 
