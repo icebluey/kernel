@@ -391,7 +391,7 @@ of the Linux kernel source.
 %endif
 
 %if %{with_bpftool}
-%define bpftoolversion 7.5.0
+%define bpftoolversion 7.4.0
 %package -n bpftool
 Summary: Inspection and simple manipulation of eBPF programs and maps.
 Version: %{bpftoolversion}
