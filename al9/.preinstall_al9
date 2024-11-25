@@ -67,7 +67,9 @@ yum install -y glibc-all-langpacks
 # For building kernel
 yum install -y libpfm-devel libpfm
 yum install -y libtraceevent-devel libtraceevent
-yum install -y libbpf-devel libbabeltrace-devel
+yum install -y libbabeltrace-devel
+yum install -y libbpf-devel
+yum install -y libbpf
 
 yum install -y dracut ; yum update -y dracut
 
