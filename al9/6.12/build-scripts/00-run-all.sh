@@ -7,9 +7,9 @@ cd "$(dirname "$0")"
 bash 00-update_linux-firmware.sh
 bash 99-clean.sh
 
-wget 'https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-6.12.1.tar.xz'
+#wget 'https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-6.12.1.tar.xz'
 
-#bash 01-dl-linux-X.Y.sh "6.12"
+bash 01-dl-linux-X.Y.sh "6.12"
 bash 02-setup.sh
 bash 03-run.sh || tail -n 500 /tmp/make_rpm-pkg.log
 echo ; grep '^CONFIG_' /tmp/make_rpm-pkg.log || : ; echo
