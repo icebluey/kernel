@@ -418,6 +418,11 @@ CONFIG_LSM="lockdown,yama,integrity,apparmor,selinux,bpf,landlock,ipe"
 
 # network device 
 > Device Drivers > Network device support
+> Device Drivers > Network device support > Ethernet driver support
+> Device Drivers > Network device support > Wireless LAN
+> Device Drivers > Network device support > Wan interfaces support
+> Device Drivers > Network device support > Wireless WAN
+> Device Drivers > Network device support > USB Network Adapters
 
 ```
 
