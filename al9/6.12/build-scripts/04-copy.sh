@@ -11,10 +11,10 @@ rm -fr "${_tmp_dir}"
 mkdir "${_tmp_dir}"
 cd "${_tmp_dir}"
 
-install -m 0755 -d kernel/kernel-"${_kver}"-repos/packages
+install -m 0755 -d kernel/kernel-"${_kver}".el9.x86_64-repos/packages
 install -m 0755 -d kernel/assets
 sleep 1
-cd kernel/kernel-"${_kver}"-repos/packages/
+cd kernel/kernel-"${_kver}".el9.x86_64-repos/packages/
 find ~/rpmbuild/RPMS/ -type f -iname '*.rpm' | xargs --no-run-if-empty -I '{}' /bin/cp -v -a '{}' ./
 sleep 2
 sha256sum *.rpm > sha256sums.txt
@@ -25,7 +25,7 @@ createrepo -v .
 echo
 sleep 2
 cd ..
-tar -zcvf assets/kernel-"${_kver}"-repos.tar.gz kernel-"${_kver}"-repos
+tar -zcvf assets/kernel-"${_kver}".el9.x86_64-repos.tar.gz kernel-"${_kver}".el9.x86_64-repos
 
 echo
 echo ' done'
