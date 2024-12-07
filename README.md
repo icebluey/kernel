@@ -424,6 +424,15 @@ CONFIG_LSM="lockdown,yama,integrity,apparmor,selinux,bpf,landlock,ipe"
 > Device Drivers > Network device support > Wireless WAN
 > Device Drivers > Network device support > USB Network Adapters
 
+# QoS and/or fair queueing
+> Networking support > Networking options > QoS and/or fair queueing
+<*>   Proportional Integral controller Enhanced (PIE) scheduler
+<*>     Flow Queue Proportional Integral controller Enhanced (FQ-PIE)
+<*>   Ingress/classifier-action Qdisc
+
+> Networking support > Networking options > QoS and/or fair queueing > Allow override default queue discipline
+(X) Flow Queue Proportional Integral controller Enhanced
+
 ```
 
 
