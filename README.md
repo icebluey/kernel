@@ -400,3 +400,26 @@ CONFIG_DEFAULT_SECURITY_SELINUX=y
 CONFIG_LSM="lockdown,yama,integrity,apparmor,selinux,bpf,landlock,ipe"
 ```
 
+
+```
+usb4
+> Device Drivers
+    <*> Unified support for USB4 and Thunderbolt  --->
+
+# usb
+> Device Drivers > USB support 
+
+> Device Drivers > USB support > USB Gadget Support M 
+> Device Drivers > USB support > USB Gadget Support > USB Peripheral Controller M
+
+# usb typec
+> Device Drivers > USB support 
+    <*>   USB Type-C Support  ---> all M
+
+# network device 
+> Device Drivers > Network device support
+
+```
+
+
+
