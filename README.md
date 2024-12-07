@@ -402,7 +402,7 @@ CONFIG_LSM="lockdown,yama,integrity,apparmor,selinux,bpf,landlock,ipe"
 
 
 ```
-usb4
+# usb4
 > Device Drivers
     <*> Unified support for USB4 and Thunderbolt  --->
 
