@@ -3,6 +3,8 @@ export PATH=$PATH:/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin
 TZ='UTC'; export TZ
 
 if ! grep -q '^alias ll=' ~/.bashrc; then echo "alias ll='/bin/ls --color -lah'" >> ~/.bashrc; . ~/.bashrc; fi
+[ -f ~/.vimrc ] || echo 'set ts=4 sw=4 et' > ~/.vimrc
+[ -f /root/.vimrc ] || echo 'set ts=4 sw=4 et' > /root/.vimrc
 
 dnf makecache
 #rpm --import "https://repo.almalinux.org/almalinux/RPM-GPG-KEY-AlmaLinux"
