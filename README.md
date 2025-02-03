@@ -40,6 +40,35 @@ bpftool.x86_64                     7.3.0-427.40.1.el9_4                  baseos
 [root@al9 ~]# 
 [root@al9 ~]# yum install bpftool-6.6.57-20241020.el9
 
+yum list | grep -i bpftool
+bpftool.x86_64
+Name.Architecture
+
+yum info Name
+yum info bpftool
+Name         : bpftool
+Version      : 7.5.0
+Release      : 20250202.el9
+Architecture : x86_64
+
+yum install Name-Version-Release
+yum install bpftool-7.5.0-20250202.el9
+
+
+yum list | grep -i kernel
+kernel.x86_64
+Name.Architecture
+
+yum info Name
+yum info kernel
+Name         : kernel
+Version      : 6.12.11
+Release      : 20250124.el9
+Architecture : x86_64
+
+yum install Name-Version-Release
+yum install kernel-6.12.11-20250124.el9
+
 ```
 
 
