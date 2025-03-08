@@ -19,6 +19,7 @@ jobs:
           sudo /bin/bash scripts/clean-os.sh
           sudo /bin/rm -fr /tmp/*
           sudo /bin/bash scripts/install-docker.sh
+          sleep 1200
 
       - name: Build kernel 6.12 el9
         run: |
