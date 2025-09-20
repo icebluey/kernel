@@ -154,6 +154,17 @@ id="6c12765bd20f4e39b8c4e0a30b8fa6a4-0-rescue"
 
 ```
 
+# set zswap
+```
+# grubby --info=ALL | grep -i '^kernel='
+kernel="/boot/vmlinuz-6.12.48-20250920.el9.x86_64"
+
+# 参数 zswap.enabled=1 zswap.compressor=zstd zswap.max_pool_percent=20
+grubby --update-kernel="/boot/vmlinuz-6.12.48-20250920.el9.x86_64" --args="zswap.enabled=1 zswap.compressor=zstd zswap.max_pool_percent=20"
+
+```
+
+
 使用 `grubby --set-default` 或者 `grub2-set-default` 的这是默认内核
 
 ```
