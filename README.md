@@ -162,6 +162,8 @@ kernel="/boot/vmlinuz-6.12.48-20250920.el9.x86_64"
 # 参数 zswap.enabled=1 zswap.compressor=zstd zswap.max_pool_percent=20
 grubby --update-kernel="/boot/vmlinuz-6.12.48-20250920.el9.x86_64" --args="zswap.enabled=1 zswap.compressor=zstd zswap.max_pool_percent=20"
 
+grubby --update-kernel="$(grubby --info=ALL | grep -i '^kernel=' | head -1 | awk -F\" '{print $2}')" --args="zswap.enabled=1 zswap.compressor=zstd zswap.max_pool_percent=20"
+
 ```
 
 
