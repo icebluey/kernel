@@ -70,6 +70,7 @@ rm -fr config-*
 if [[ -f .config ]]; then
     cp -f .config config-"${_linux_kernel_ver}"-x86_64
     sleep 1
+    sed '/^CONFIG_CRYPTO_FIPS_NAME=/s|9|8|g' -i config-"${_linux_kernel_ver}"-x86_64
     sed -i -e "/Kernel Configuration/s|^# Linux/x86_64 .*Kernel Configuration|# Linux/x86_64 ${_linux_kernel_ver} Kernel Configuration|g" config-"${_linux_kernel_ver}"-x86_64
 fi
 
