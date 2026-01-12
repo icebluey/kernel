@@ -15,6 +15,7 @@ dnf makecache
 /usr/bin/crb enable
 dnf upgrade -y epel-release
 dnf makecache
+dnf install -y --allowerasing coreutils
 dnf upgrade -y
 
 yum install -y openssl-libs
