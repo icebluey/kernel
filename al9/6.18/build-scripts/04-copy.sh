@@ -13,7 +13,9 @@ cd "${_tmp_dir}"
 
 install -m 0755 -d kernel/kernel-"${_kver}".el9.x86_64-repos/packages
 install -m 0755 -d kernel/assets
-sleep 1
+
+find ~/rpmbuild/ -type f -iname '*.rpm'
+
 cd kernel/kernel-"${_kver}".el9.x86_64-repos/packages/
 find ~/rpmbuild/RPMS/ -type f -iname '*.rpm' | xargs --no-run-if-empty -I '{}' /bin/cp -v -a '{}' ./
 sleep 2
