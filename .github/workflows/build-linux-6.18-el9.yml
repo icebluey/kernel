@@ -1,0 +1,44 @@
+name: build-linux-6.18-el9
+on:
+  #push:
+  #  branches: [ "master" ]
+  #pull_request:
+  #  branches: [ "master" ]
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v6
+      - name: Install docker
+        run: |
+          sudo apt update -y -qqq
+          sudo apt autoremove --purge -y needrestart || true
+          sudo apt install -y bash wget
+          sudo ln -svf bash /bin/sh
+          sudo /bin/bash scripts/clean-os.sh
+          sudo /bin/rm -fr /tmp/*
+          sudo /bin/bash scripts/install-docker.sh
+
+      - name: Build kernel 6.18 el9
+        run: |
+          sudo /bin/bash al9/6.18/run-build-al9.sh
+          sudo /bin/systemctl stop docker.socket docker.service containerd.service
+          sudo /bin/rm -fr /var/lib/docker/* /var/lib/containerd/* /mnt/docker-data/*
+
+      - name: Generate release tag env
+        run: |
+          echo "_dateutc=$(date -u +%Y-%m-%d-%H%M)" >> $GITHUB_ENV
+
+      - name: Upload files
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ env._dateutc }}
+          files: |
+            /tmp/_output_assets/_output/kernel/assets/*
+            /tmp/_output_assets/_output/kernel/kernel-**-repos/packages/*
+
+      - name: Delete old release tag env
+        run: |
+          sed -e "/^_dateutc=/d" -i $GITHUB_ENV
+          sudo rm -fr /tmp/_output_assets

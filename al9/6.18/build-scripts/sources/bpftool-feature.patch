@@ -1,8 +1,8 @@
 diff --git a/tools/bpf/bpftool/feature.c b/tools/bpf/bpftool/feature.c
-index 4dbc4fc..e39436f 100644
+index 0f6070a..f1b84cd 100644
 --- a/tools/bpf/bpftool/feature.c
 +++ b/tools/bpf/bpftool/feature.c
-@@ -1037,6 +1037,16 @@ static void section_misc(const char *define_prefix, __u32 ifindex)
+@@ -982,6 +982,16 @@ static void section_misc(const char *define_prefix, __u32 ifindex)
  #define capability_msg(a, i) a[i].set ? "" : a[i].name, a[i].set ? "" : ", "
  #endif
  
