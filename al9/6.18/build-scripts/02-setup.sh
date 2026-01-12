@@ -31,7 +31,8 @@ _kernel_spec_file=kernel-"${_major}.${_minor}.${_patch}".spec
 _datenow="$(date -u +%Y%m%d)"
 sed "/^%global LKAver /s|LKAver .*|LKAver ${_linux_kernel_ver}|g" -i "${_kernel_spec_file}"
 sed "/^%global pkg_release /s|pkg_release .*|pkg_release ${_datenow}%{?dist}%{?buildid}|g" -i "${_kernel_spec_file}"
-sed 's|^NoSource:|#NoSource:|g' -i "${_kernel_spec_file}"
+
+#sed 's|^NoSource:|#NoSource:|g' -i "${_kernel_spec_file}"
 
 sed -e '/^%changelog/,$d' -i "${_kernel_spec_file}"
 echo '%changelog' >> "${_kernel_spec_file}"
