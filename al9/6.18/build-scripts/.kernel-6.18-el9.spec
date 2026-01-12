@@ -254,7 +254,7 @@ Patch1: bpftool-feature.patch
 # Do not package the source tarball.
 # To build .src.rpm, run with '--with src'
 %if %{?_with_src:0}%{!?_with_src:1}
-NoSource: 1
+NoSource: 0
 %endif
 
 %if %{signkernel}
