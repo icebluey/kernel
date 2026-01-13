@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 jobs:
   build:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v6
       - name: Install docker
@@ -19,7 +19,6 @@ jobs:
           sudo /bin/bash scripts/clean-os.sh
           sudo /bin/rm -fr /tmp/*
           sudo /bin/bash scripts/install-docker.sh
-          sleep 1500
 
       - name: Build kernel 6.12 el9
         run: |
