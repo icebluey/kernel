@@ -19,7 +19,7 @@ echo
 #_download_link=$(wget -qO- "https://www.kernel.org/" | grep -Po 'https://cdn\.kernel\.org/pub/linux/kernel/v[0-9]+\.x/linux-[0-9]+\.[0-9]+\.[0-9]+\.tar\.xz' | sort -V | uniq | grep "linux-${_major}\.${_minor}")
 #_filename="${_download_link##*/}"
 
-_filename=$(wget -qO- "https://cdn.kernel.org/pub/linux/kernel/v${_major}.x/" | grep -Eo 'linux-[0-9]+\.[0-9]+\.[0-9]+\.tar\.xz' | grep "linux-${_major}\.${_minor}" | sort -V | uniq | tail -n1)
+_filename=$(wget -qO- "https://cdn.kernel.org/pub/linux/kernel/v${_major}.x/" | grep -Eo 'linux-[0-9]+\.[0-9]+(\.[0-9]+)*\.tar\.xz' | grep "linux-${_major}\.${_minor}" | sort -V | uniq | tail -n1)
 
 wget -c -t 9 -T 9 "https://cdn.kernel.org/pub/linux/kernel/v${_major}.x/${_filename}"
 _hash=$(wget -qO- "https://cdn.kernel.org/pub/linux/kernel/v${_major}.x/sha256sums.asc" | grep "${_filename}[[:space:]]*$" | awk '{print $1}')
