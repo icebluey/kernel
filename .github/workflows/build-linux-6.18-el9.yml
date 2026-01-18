@@ -14,7 +14,7 @@ jobs:
         run: |
           sudo apt update -y -qqq
           sudo apt autoremove --purge -y needrestart || true
-          sudo apt install -y bash wget
+          sudo apt install -y bash wget curl openssl
           sudo ln -svf bash /bin/sh
           sudo /bin/bash scripts/clean-os.sh
           sudo /bin/rm -fr /tmp/*
