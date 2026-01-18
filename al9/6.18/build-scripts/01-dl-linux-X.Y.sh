@@ -22,7 +22,7 @@ echo
 _filename=$(wget -qO- "https://cdn.kernel.org/pub/linux/kernel/v${_major}.x/" | grep -Eo 'linux-[0-9]+\.[0-9]+(\.[0-9]+)*\.tar\.xz' | grep "linux-${_major}\.${_minor}" | sort -V | uniq | tail -n1)
 
 wget -c -t 9 -T 9 "https://cdn.kernel.org/pub/linux/kernel/v${_major}.x/${_filename}"
-_hash=$(wget -qO- "https://cdn.kernel.org/pub/linux/kernel/v${_major}.x/sha256sums.asc" | grep "${_filename}[[:space:]]*$" | awk '{print $1}')
+_hash=$(wget -qO- "https://cdn.kernel.org/pub/linux/kernel/v${_major}.x/sha256sums.asc" | grep "${_filename}[[:blank:]]*$" | awk '{print $1}')
 if [[ -n $_hash ]]; then
     echo "$_hash  $_filename" > "${_filename}.sha256"
     sha256sum -c "${_filename}.sha256"
