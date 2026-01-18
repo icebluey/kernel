@@ -172,6 +172,7 @@ grubby --update-kernel="$(grubby --info=ALL | grep -i '^kernel=' | head -1 | awk
 ```
 1. grubby
 设置默认kernel , --set-default 等于 grubby --info=ALL 中的 kernel 的值
+[root@al9 ~]# grubby --info=ALL | grep -i '^kernel='
 [root@al9 ~]# grubby --set-default=/boot/vmlinuz-5.14.0-284.11.1.rt14.296.el9_2.x86_64
 
 2. grub2-set-default
