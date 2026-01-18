@@ -16,10 +16,13 @@ echo
 echo " Download linux kernel: v$1"
 echo
 
-_download_link=$(wget -qO- "https://www.kernel.org/" | grep -Po 'https://cdn\.kernel\.org/pub/linux/kernel/v[0-9]+\.x/linux-[0-9]+\.[0-9]+\.[0-9]+\.tar\.xz' | sort -V | uniq | grep "linux-${_major}\.${_minor}")
-_filename="${_download_link##*/}"
+#_download_link=$(wget -qO- "https://www.kernel.org/" | grep -Po 'https://cdn\.kernel\.org/pub/linux/kernel/v[0-9]+\.x/linux-[0-9]+\.[0-9]+\.[0-9]+\.tar\.xz' | sort -V | uniq | grep "linux-${_major}\.${_minor}")
+#_filename="${_download_link##*/}"
+
+_filename=$(wget -qO- "https://cdn.kernel.org/pub/linux/kernel/v${_major}.x/" | grep -Eo 'linux-[0-9]+\.[0-9]+\.[0-9]+\.tar\.xz' | grep "linux-${_major}\.${_minor}" | sort -V | uniq | tail -n1)
+
 wget -c -t 9 -T 9 "https://cdn.kernel.org/pub/linux/kernel/v${_major}.x/${_filename}"
-_hash=$(wget -qO- "https://cdn.kernel.org/pub/linux/kernel/v${major}.x/sha256sums.asc" | awk -v filename="$_filename" '$0 ~ filename {print $2,$1}' | sort -V | tail -n1 | awk '{print $NF}')
+_hash=$(wget -qO- "https://cdn.kernel.org/pub/linux/kernel/v${_major}.x/sha256sums.asc" | grep "${_filename}[[:space:]]*$" | awk '{print $1}')
 if [[ -n $_hash ]]; then
     echo "$_hash  $_filename" > "${_filename}.sha256"
     sha256sum -c "${_filename}.sha256"
