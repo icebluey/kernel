@@ -75,6 +75,10 @@ yum install -y libbabeltrace-devel
 yum install -y libbpf-devel
 yum install -y libbpf
 
+dnf install -y mesa-filesystem llvm llvm-libs llvm-filesystem clang clang-libs openssl openssl-devel openssl-libs openssl-fips-provider openssl-pkcs11
+dnf upgrade -y --allowerasing mesa-filesystem llvm llvm-libs llvm-filesystem clang clang-libs openssl openssl-devel openssl-libs openssl-fips-provider openssl-pkcs11
+dnf upgrade -y
+
 yum install -y dracut ; yum update -y dracut
 
 /sbin/ldconfig >/dev/null 2>&1
